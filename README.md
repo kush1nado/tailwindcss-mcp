@@ -139,6 +139,25 @@ You can also pass `--config=/path` as a single argument when starting the server
   - Optional `section`: `colors`, `spacing`, `screens`, `borderRadius`, `fontFamily`, `fontSize`, `boxShadow`.  
   - Optional `configPath`.
 
+## Troubleshooting
+
+**"Connection closed" / "No server info found" in Cursor** – The MCP process exits before the handshake. Common causes:
+
+1. **Global install from npm** – Older tarballs might not include the built `dist/` folder. Reinstall the latest version, or run the server by path instead of the `tailwindcss-mcp` command:
+   ```json
+   "tailwindcss": {
+     "command": "node",
+     "args": ["/absolute/path/to/tailwindcss-mcp/dist/index.js"]
+   }
+   ```
+   (Use the path where the repo is cloned or the package is installed; run `npm run build` there first.)
+
+2. **Crash on startup** – Run in a terminal to see the error:
+   ```bash
+   tailwindcss-mcp
+   ```
+   or `node /path/to/tailwindcss-mcp/dist/index.js`. Any message printed to stderr will point to the cause.
+
 ## License
 
 MIT

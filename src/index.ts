@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -20,7 +21,7 @@ const configPath = TAILWIND_CONFIG_PATH ?? getConfigPathFromArgs();
 
 const server = new McpServer({
   name: 'tailwindcss-mcp',
-  version: '1.0.0',
+  version: '1.0.1',
 });
 
 const loaderOptions = () => ({
@@ -114,4 +115,13 @@ server.registerResource(
 );
 
 const transport = new StdioServerTransport();
-await server.connect(transport);
+try {
+  await server.connect(transport);
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err);
+  process.stderr.write(`tailwindcss-mcp failed: ${message}\n`);
+  if (err instanceof Error && err.stack) {
+    process.stderr.write(err.stack);
+  }
+  process.exitCode = 1;
+}
