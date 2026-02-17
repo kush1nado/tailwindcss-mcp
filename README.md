@@ -19,6 +19,21 @@ npm install -g tailwindcss-mcp
 pnpm add -g tailwindcss-mcp
 ```
 
+If you get **EACCES** (permission denied) when installing globally, npm is trying to write to a system directory. Use one of these approaches:
+
+1. **User-owned global directory (recommended)** – install globals without sudo:
+   ```bash
+   mkdir -p ~/.npm-global
+   npm config set prefix ~/.npm-global
+   ```
+   Add to your `~/.zshrc` (or `~/.bashrc`): `export PATH="$HOME/.npm-global/bin:$PATH"`, then run `source ~/.zshrc`. After that, `npm install -g tailwindcss-mcp` will work.
+
+2. **No global install** – clone or install the package somewhere (e.g. `~/dev/tailwindcss-mcp`), run `npm install && npm run build`, and in Cursor point to that path:
+   ```json
+   "command": "node",
+   "args": ["/Users/you/dev/tailwindcss-mcp/dist/index.js"]
+   ```
+
 From source:
 
 ```bash
