@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 import { z } from 'zod';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { suggestClasses } from './tools/suggest-classes.js';
 import { validateClasses } from './tools/validate-classes.js';
 import { getTheme } from './tools/get-theme.js';
-import { getThemeResourceContent, getThemeResourceUri } from './resources/theme-resource.js';
+import {
+  getThemeResourceContent,
+  getThemeResourceUri,
+  getThemeResourceContentForSection,
+  THEME_SECTIONS,
+} from './resources/theme-resource.js';
 import type { ThemeSection } from './types.js';
 
 const TAILWIND_CONFIG_PATH = process.env.TAILWIND_CONFIG_PATH;
@@ -108,6 +113,42 @@ server.registerResource(
   },
   async (uri: URL) => {
     const text = await getThemeResourceContent(uri, loaderOptions());
+    return {
+      contents: [{ uri: uri.href, mimeType: 'application/json', text }],
+    };
+  }
+);
+
+const themeSectionTemplate = new ResourceTemplate('tailwind://theme/{section}', {
+  list: async () => ({
+    resources: THEME_SECTIONS.map((section) => ({
+      uri: getThemeResourceUri(section),
+      name: `Theme: ${section}`,
+    })),
+  }),
+  complete: {
+    section: (value: string) =>
+      Promise.resolve(
+        THEME_SECTIONS.filter((s) => s.startsWith(value.toLowerCase()))
+      ),
+  },
+});
+
+server.registerResource(
+  'tailwind-theme-section',
+  themeSectionTemplate,
+  {
+    title: 'Tailwind theme section',
+    description: 'Theme section (colors, spacing, screens, etc.) as JSON',
+    mimeType: 'application/json',
+  },
+  async (uri: URL, variables: Record<string, string | string[]>) => {
+    const raw = variables['section'];
+    const section = typeof raw === 'string' ? raw : raw?.[0];
+    const text = await getThemeResourceContentForSection(
+      section,
+      loaderOptions()
+    );
     return {
       contents: [{ uri: uri.href, mimeType: 'application/json', text }],
     };
