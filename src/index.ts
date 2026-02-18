@@ -26,7 +26,7 @@ const configPath = TAILWIND_CONFIG_PATH ?? getConfigPathFromArgs();
 
 const server = new McpServer({
   name: 'tailwindcss-mcp',
-  version: '1.0.1',
+  version: '1.1.0',
 });
 
 const loaderOptions = () => ({
