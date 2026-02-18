@@ -125,6 +125,10 @@ In Claude Desktop config (e.g. `~/Library/Application Support/Claude/claude_desk
 
 You can also pass `--config=/path` as a single argument when starting the server.
 
+### Config file format
+
+Supported config files: `tailwind.config.js`, `tailwind.config.cjs`, `tailwind.config.mjs`, `tailwind.config.ts`. For **tailwind.config.ts**, Node must be able to run TypeScript (e.g. via ts-node or tsx). If you start the server with plain `node dist/index.js`, a `.ts` config will not load and the server will use the default theme. Prefer `.js` / `.cjs` / `.mjs`, or run the server with `tsx` or `ts-node` and pass the project path if you need a TypeScript config.
+
 ## Tool examples
 
 - **suggest_classes**  
